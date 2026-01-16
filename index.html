@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Engineer Roadmap Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .topic-item {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div id="app" class="p-6"></div>
+
+    <script>
+        const roadmapData = [
+            {
+                phase: "Foundation",
+                duration: "2-3 months",
+                topics: [
+                    { 
+                        name: "Python Programming Basics", 
+                        resources: ["Python.org Tutorial", "freeCodeCamp Python Course"],
+                        searchQuery: "python programming basics tutorial free"
+                    },
+                    { 
+                        name: "NumPy & Pandas", 
+                        resources: ["NumPy Docs", "Pandas Docs"],
+                        searchQuery: "numpy pandas tutorial for machine learning"
+                    },
+                    { 
+                        name: "Data Visualization (Matplotlib)", 
+                        resources: ["Matplotlib Tutorials"],
+                        searchQuery: "matplotlib data visualization tutorial"
+                    },
+                    { 
+                        name: "Linear Algebra", 
+                        resources: ["Khan Academy", "3Blue1Brown"],
+                        searchQuery: "linear algebra machine learning 3blue1brown"
+                    },
+                    { 
+                        name: "Calculus Fundamentals", 
+                        resources: ["Khan Academy"],
+                        searchQuery: "calculus for machine learning khan academy"
+                    },
+                    { 
+                        name: "Probability & Statistics", 
+                        resources: ["Khan Academy"],
+                        searchQuery: "probability statistics machine learning free course"
+                    }
+                ]
+            },
+            {
+                phase: "Core Machine Learning",
+                duration: "3-4 months",
+                topics: [
+                    { 
+                        name: "Andrew Ng's ML Specialization", 
+                        resources: ["Coursera"],
+                        searchQuery: "andrew ng machine learning specialization coursera"
+                    },
+                    { 
+                        name: "Regression Models", 
+                        resources: ["scikit-learn Docs"],
+                        searchQuery: "regression models scikit-learn tutorial"
+                    },
+                    { 
+                        name: "Decision Trees & Random Forests", 
+                        resources: ["scikit-learn Docs"],
+                        searchQuery: "decision trees random forests tutorial"
+                    },
+                    { 
+                        name: "Support Vector Machines", 
+                        resources: ["scikit-learn Docs"],
+                        searchQuery: "SVM support vector machines tutorial"
+                    },
+                    { 
+                        name: "Clustering Algorithms", 
+                        resources: ["scikit-learn Docs"],
+                        searchQuery: "clustering algorithms k-means tutorial"
+                    },
+                    { 
+                        name: "Kaggle Practice Projects", 
+                        resources: ["Kaggle"],
+                        searchQuery: "kaggle beginner machine learning competitions"
+                    }
+                ]
+            },
+            {
+                phase: "Deep Learning",
+                duration: "3-4 months",
+                topics: [
+                    { 
+                        name: "fast.ai Course", 
+                        resources: ["fast.ai"],
+                        searchQuery: "fast.ai practical deep learning for coders"
+                    },
+                    { 
+                        name: "Deep Learning Specialization", 
+                        resources: ["Coursera"],
+                        searchQuery: "andrew ng deep learning specialization"
+                    },
+                    { 
+                        name: "Neural Networks Fundamentals", 
+                        resources: ["3Blue1Brown"],
+                        searchQuery: "neural networks 3blue1brown tutorial"
+                    },
+                    { 
+                        name: "PyTorch Basics", 
+                        resources: ["PyTorch.org"],
+                        searchQuery: "pytorch tutorial for beginners official"
+                    },
+                    { 
+                        name: "TensorFlow Basics", 
+                        resources: ["TensorFlow.org"],
+                        searchQuery: "tensorflow tutorial for beginners official"
+                    },
+                    { 
+                        name: "CNNs & Computer Vision", 
+                        resources: ["PyTorch Tutorials"],
+                        searchQuery: "convolutional neural networks CNN tutorial"
+                    },
+                    { 
+                        name: "RNNs & Sequence Models", 
+                        resources: ["PyTorch Tutorials"],
+                        searchQuery: "recurrent neural networks RNN LSTM tutorial"
+                    }
+                ]
+            },
+            {
+                phase: "MLOps & Engineering",
+                duration: "2-3 months",
+                topics: [
+                    { 
+                        name: "Git & Version Control", 
+                        resources: ["GitHub Guides"],
+                        searchQuery: "git github tutorial for machine learning"
+                    },
+                    { 
+                        name: "Docker Basics", 
+                        resources: ["Docker Docs"],
+                        searchQuery: "docker tutorial for machine learning deployment"
+                    },
+                    { 
+                        name: "Model Deployment with FastAPI", 
+                        resources: ["FastAPI Docs"],
+                        searchQuery: "fastapi machine learning model deployment tutorial"
+                    },
+                    { 
+                        name: "MLOps Fundamentals", 
+                        resources: ["Made With ML"],
+                        searchQuery: "mlops tutorial made with ml free course"
+                    },
+                    { 
+                        name: "Cloud Platforms (AWS/GCP/Azure)", 
+                        resources: ["AWS Free Tier", "GCP Docs"],
+                        searchQuery: "aws machine learning free tier tutorial"
+                    },
+                    { 
+                        name: "Model Monitoring & Versioning", 
+                        resources: ["MLflow Docs"],
+                        searchQuery: "mlflow model versioning monitoring tutorial"
+                    }
+                ]
+            },
+            {
+                phase: "Advanced Topics",
+                duration: "Ongoing",
+                topics: [
+                    { 
+                        name: "Natural Language Processing", 
+                        resources: ["Hugging Face Course"],
+                        searchQuery: "hugging face nlp course free"
+                    },
+                    { 
+                        name: "Computer Vision (CS231n)", 
+                        resources: ["Stanford YouTube"],
+                        searchQuery: "stanford cs231n computer vision youtube"
+                    },
+                    { 
+                        name: "Reinforcement Learning", 
+                        resources: ["OpenAI Spinning Up"],
+                        searchQuery: "openai spinning up reinforcement learning"
+                    },
+                    { 
+                        name: "Research Paper Implementation", 
+                        resources: ["arXiv", "Papers with Code"],
+                        searchQuery: "papers with code machine learning implementations"
+                    },
+                    { 
+                        name: "Transformers & Attention", 
+                        resources: ["Hugging Face"],
+                        searchQuery: "transformers attention mechanism tutorial"
+                    },
+                    { 
+                        name: "Open Source Contributions", 
+                        resources: ["GitHub"],
+                        searchQuery: "contribute to machine learning open source projects"
+                    }
+                ]
+            }
+        ];
+
+        class RoadmapApp {
+            constructor() {
+                this.progress = this.loadProgress();
+                this.expandedPhase = null;
+                this.render();
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('ai-roadmap-progress');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            saveProgress() {
+                localStorage.setItem('ai-roadmap-progress', JSON.stringify(this.progress));
+            }
+
+            toggleTopic(phase, topicName) {
+                const key = `${phase}-${topicName}`;
+                this.progress[key] = !this.progress[key];
+                this.saveProgress();
+                this.render();
+            }
+
+            togglePhase(phase) {
+                this.expandedPhase = this.expandedPhase === phase ? null : phase;
+                this.render();
+            }
+
+            searchTopic(searchQuery) {
+                const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+                window.open(url, '_blank');
+            }
+
+            getPhaseProgress(phase) {
+                const phaseData = roadmapData.find(p => p.phase === phase);
+                if (!phaseData) return 0;
+                
+                const completed = phaseData.topics.filter(topic => 
+                    this.progress[`${phase}-${topic.name}`]
+                ).length;
+                
+                return Math.round((completed / phaseData.topics.length) * 100);
+            }
+
+            getTotalProgress() {
+                const totalTopics = roadmapData.reduce((sum, phase) => sum + phase.topics.length, 0);
+                const completedTopics = Object.values(this.progress).filter(Boolean).length;
+                return Math.round((completedTopics / totalTopics) * 100);
+            }
+
+            render() {
+                const app = document.getElementById('app');
+                const totalProgress = this.getTotalProgress();
+                
+                app.innerHTML = `
+                    <div class="max-w-5xl mx-auto">
+                        <!-- Header -->
+                        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                                        AI Engineer Roadmap
+                                    </h1>
+                                    <p class="text-gray-600">Track your progress to ML expertise</p>
+                                </div>
+                                <svg class="w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            
+                            <!-- Overall Progress -->
+                            <div class="mt-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-semibold text-gray-700">Overall Progress</span>
+                                    <span class="text-sm font-bold text-indigo-600">${totalProgress}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full transition-all duration-500"
+                                         style="width: ${totalProgress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Roadmap Phases -->
+                        ${roadmapData.map((phase, idx) => this.renderPhase(phase, idx)).join('')}
+
+                        <!-- Footer Tips -->
+                        <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">💡 Pro Tips</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Build projects alongside learning to reinforce concepts</li>
+                                <li>• Join AI/ML communities on Reddit, Discord, and Kaggle</li>
+                                <li>• Create a GitHub portfolio showcasing your projects</li>
+                                <li>• Practice coding interviews on LeetCode</li>
+                                <li>• Stay consistent - even 1 hour daily compounds over time</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                this.attachEventListeners();
+            }
+
+            renderPhase(phase, idx) {
+                const phaseProgress = this.getPhaseProgress(phase.phase);
+                const isExpanded = this.expandedPhase === phase.phase;
+                
+                return `
+                    <div class="bg-white rounded-2xl shadow-lg mb-4 overflow-hidden">
+                        <!-- Phase Header -->
+                        <button class="phase-toggle w-full p-6 text-left hover:bg-gray-50 transition-colors"
+                                data-phase="${phase.phase}">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${
+                                        phaseProgress === 100 ? 'bg-green-500' : 'bg-indigo-500'
+                                    }">
+                                        <span class="text-white font-bold">${idx + 1}</span>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-gray-800">${phase.phase}</h2>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            <span class="text-sm text-gray-600">${phase.duration}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-indigo-600">${phaseProgress}%</div>
+                                    <div class="text-xs text-gray-500">Complete</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Phase Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500"
+                                     style="width: ${phaseProgress}%"></div>
+                            </div>
+                        </button>
+
+                        <!-- Topics List -->
+                        ${isExpanded ? this.renderTopics(phase) : ''}
+                    </div>
+                `;
+            }
+
+            renderTopics(phase) {
+                return `
+                    <div class="border-t border-gray-200 p-6 bg-gray-50">
+                        ${phase.topics.map(topic => this.renderTopic(phase.phase, topic)).join('')}
+                    </div>
+                `;
+            }
+
+            renderTopic(phaseName, topic) {
+                const isCompleted = this.progress[`${phaseName}-${topic.name}`];
+                
+                return `
+                    <div class="topic-item bg-white rounded-lg p-4 mb-3 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-start gap-3">
+                            <!-- Checkbox -->
+                            <button class="topic-toggle flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
+                                isCompleted 
+                                    ? 'bg-green-500 border-green-500' 
+                                    : 'border-gray-300 hover:border-indigo-400'
+                            }"
+                                    data-phase="${phaseName}"
+                                    data-topic="${topic.name}">
+                                ${isCompleted ? `
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                ` : ''}
+                            </button>
+
+                            <div class="flex-1">
+                                <h3 class="font-semibold mb-2 ${
+                                    isCompleted ? 'text-gray-500 line-through' : 'text-gray-800'
+                                }">
+                                    ${topic.name}
+                                </h3>
+                                
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-600">
+                                        ${topic.resources.join(', ')}
+                                    </span>
+                                </div>
+
+                                <button class="search-btn flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+                                        data-query="${topic.searchQuery}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Search Learning Materials
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            attachEventListeners() {
+                // Phase toggle listeners
+                document.querySelectorAll('.phase-toggle').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const phase = e.currentTarget.dataset.phase;
+                        this.togglePhase(phase);
+                    });
+                });
+
+                // Topic toggle listeners
+                document.querySelectorAll('.topic-toggle').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const phase = e.currentTarget.dataset.phase;
+                        const topic = e.currentTarget.dataset.topic;
+                        this.toggleTopic(phase, topic);
+                    });
+                });
+
+                // Search button listeners
+                document.querySelectorAll('.search-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const query = e.currentTarget.dataset.query;
+                        this.searchTopic(query);
+                    });
+                });
+            }
+        }
+
+        // Initialize the app
+        new RoadmapApp();
+    </script>
+</body>
+</html>
