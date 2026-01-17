@@ -146,7 +146,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 **Omparhad**
 
-- GitHub: [@omparhad] 
+- GitHub: @OmParhad 
 - Project Link:(https://github.com/OmParhad/AI-Engineer-Roadmap.io)
 
 ---
