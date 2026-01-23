@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="url/of/favicon.ico">
     <title>AI Engineer Roadmap </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -11,22 +12,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .topic-item { animation: slideIn 0.3s ease-out; }
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            animation: confetti 3s linear;
-            pointer-events: none;
-        }
-        @media print {
-            body * { visibility: hidden; }
-            #certificateContent, #certificateContent * { visibility: visible; }
-            #certificateContent { position: absolute; left: 0; top: 0; }
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
@@ -36,29 +23,17 @@
         </svg>
     </a>
 
-    <div id="app" class="p-6"></div>
+    <div id="app"></div>
 
-    <div id="certificateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
-            <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 print:hidden">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-            <div id="certificateContent"></div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const roadmapData = [
             {
                 phase: "Mathematics for AI/ML",
                 duration: "3-4 months",
                 topics: [
-                    { name: "Linear Algebra (Vectors, Matrices, Eigenvalues)", resources: ["Khan Academy", "3Blue1Brown"], searchQuery: "linear algebra machine learning Khan Academy" },
-                    { name: "Calculus (Derivatives, Gradients, Optimization)", resources: ["Khan Academy", "MIT OCW"], searchQuery: "calculus for machine learning gradient Khan Academy" },
-                    { name: "Probability Theory", resources: ["Khan Academy", "StatQuest"], searchQuery: "probability theory machine learning from StatQuest YouTube" },
+                    { name: "Linear Algebra (Vectors, Matrices, Eigenvalues)", resources: ["Khan Academy", "3Blue1Brown"], searchQuery: "linear algebra machine learning 3blue1brown" },
+                    { name: "Calculus (Derivatives, Gradients, Optimization)", resources: ["Khan Academy", "MIT OCW"], searchQuery: "calculus for machine learning gradient descent" },
+                    { name: "Probability Theory", resources: ["Khan Academy", "StatQuest"], searchQuery: "probability theory machine learning" },
                     { name: "Statistics (Distributions, Hypothesis Testing)", resources: ["Khan Academy", "StatQuest"], searchQuery: "statistics for machine learning statquest" },
                     { name: "Information Theory & Entropy", resources: ["Khan Academy"], searchQuery: "information theory entropy machine learning" },
                     { name: "Optimization Techniques", resources: ["Stanford Lectures"], searchQuery: "optimization techniques machine learning tutorial" }
@@ -182,204 +157,142 @@
             }
         ];
 
-        class RoadmapApp {
-            constructor() {
-                this.progress = this.loadProgress();
-                this.expandedPhase = null;
-                this.userName = this.loadUserName();
-                this.render();
-                this.checkCertificate();
-            }
+        const blogs = [
+            { title: "Andrej Karpathy's Blog", url: "http://karpathy.github.io/", desc: "Deep learning insights from Tesla's former AI director" },
+            { title: "Distill.pub", url: "https://distill.pub/", desc: "Clear explanations of ML research with interactive visualizations" },
+            { title: "Google AI Blog", url: "https://ai.googleblog.com/", desc: "Latest AI research and developments from Google" },
+            { title: "OpenAI Blog", url: "https://openai.com/blog/", desc: "Updates on GPT models and AI safety research" },
+            { title: "Chip Huyen's Blog", url: "https://huyenchip.com/blog/", desc: "ML systems design and production ML insights" },
+            { title: "Jay Alammar's Blog", url: "https://jalammar.github.io/", desc: "Visual guides to transformers and NLP concepts" },
+            { title: "Sebastian Ruder's Blog", url: "https://ruder.io/", desc: "NLP research and transfer learning" },
+            { title: "Lil'Log by Lilian Weng", url: "https://lilianweng.github.io/", desc: "Deep dives into RL, generative models, and attention" },
+            { title: "FastML", url: "http://fastml.com/", desc: "Practical ML tutorials and kaggle insights" },
+            { title: "Machine Learning Mastery", url: "https://machinelearningmastery.com/blog/", desc: "Beginner-friendly ML tutorials by Jason Brownlee" }
+        ];
 
-            loadProgress() {
-                const saved = localStorage.getItem('ai-roadmap-progress');
-                return saved ? JSON.parse(saved) : {};
-            }
+        const books = [
+            { title: "Deep Learning Book by Ian Goodfellow", url: "https://www.deeplearningbook.org/", desc: "Comprehensive DL textbook - free online" },
+            { title: "Neural Networks and Deep Learning", url: "http://neuralnetworksanddeeplearning.com/", desc: "Interactive book on neural networks fundamentals" },
+            { title: "Pattern Recognition and ML (Bishop)", url: "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf", desc: "Classic ML textbook with Bayesian perspective" },
+            { title: "Dive into Deep Learning", url: "https://d2l.ai/", desc: "Interactive DL book with code in PyTorch/TensorFlow" },
+            { title: "The Hundred-Page ML Book", url: "http://themlbook.com/wiki/doku.php", desc: "Concise ML fundamentals (pay what you want)" },
+            { title: "Understanding Deep Learning", url: "https://udlbook.github.io/udlbook/", desc: "Free textbook by Simon Prince (2023)" },
+            { title: "Probabilistic ML - An Introduction", url: "https://probml.github.io/pml-book/book1.html", desc: "Kevin Murphy's comprehensive ML book" },
+            { title: "Foundations of ML", url: "https://cs.nyu.edu/~mohri/mlbook/", desc: "Mathematical foundations by Mohri et al." },
+            { title: "Speech and Language Processing", url: "https://web.stanford.edu/~jurafsky/slp3/", desc: "NLP textbook by Jurafsky & Martin" },
+            { title: "Reinforcement Learning: An Intro", url: "http://incompleteideas.net/book/the-book-2nd.html", desc: "Sutton & Barto's RL bible - free PDF" }
+        ];
 
-            loadUserName() {
-                return localStorage.getItem('ai-roadmap-username') || '';
-            }
+        const projects = [
+            { title: "Image Classification Web App", difficulty: "Beginner", desc: "Build a web app to classify images using pre-trained models (ResNet, VGG). Deploy with Streamlit or Gradio.", tech: "Python, PyTorch/TensorFlow, Streamlit" },
+            { title: "Sentiment Analysis for Product Reviews", difficulty: "Beginner", desc: "Analyze Amazon/Yelp reviews using NLP. Visualize sentiment trends over time.", tech: "Python, NLTK/spaCy, Pandas, Matplotlib" },
+            { title: "Recommendation System", difficulty: "Intermediate", desc: "Build a movie/book recommender using collaborative filtering and matrix factorization.", tech: "Python, Surprise library, FastAPI" },
+            { title: "Object Detection for Smart Parking", difficulty: "Intermediate", desc: "Detect empty parking spots in real-time using YOLO or Faster R-CNN.", tech: "Python, OpenCV, YOLO, Flask" },
+            { title: "Custom Chatbot with RAG", difficulty: "Intermediate", desc: "Build a domain-specific chatbot using Retrieval-Augmented Generation with vector databases.", tech: "Python, LangChain, ChromaDB, OpenAI API" },
+            { title: "Stock Price Prediction with LSTM", difficulty: "Intermediate", desc: "Predict stock prices using time-series analysis and LSTM networks. Add technical indicators.", tech: "Python, PyTorch, yfinance, Plotly" },
+            { title: "Deepfake Detection System", difficulty: "Advanced", desc: "Build a classifier to detect deepfakes using facial landmarks and temporal inconsistencies.", tech: "Python, PyTorch, OpenCV, FaceNet" },
+            { title: "AI-Powered Code Review Tool", difficulty: "Advanced", desc: "Create a tool that analyzes code quality, suggests improvements using LLMs and static analysis.", tech: "Python, Transformers, AST parsing, GPT-4 API" },
+            { title: "Multi-Agent RL Environment", difficulty: "Advanced", desc: "Build a custom OpenAI Gym environment with multiple agents playing a game (like Pong or Tag).", tech: "Python, OpenAI Gym, Stable Baselines3" },
+            { title: "Medical Image Segmentation", difficulty: "Advanced", desc: "Segment tumors in MRI scans using U-Net architecture. Use publicly available datasets.", tech: "Python, PyTorch, U-Net, Medical imaging datasets" },
+            { title: "Real-time Gesture Recognition", difficulty: "Intermediate", desc: "Recognize hand gestures in real-time using MediaPipe and train custom models.", tech: "Python, MediaPipe, TensorFlow Lite, OpenCV" },
+            { title: "Document Q&A System", difficulty: "Advanced", desc: "Build a system that answers questions from uploaded PDFs using transformers and embeddings.", tech: "Python, Transformers, FAISS, LangChain" }
+        ];
 
-            saveUserName(name) {
-                this.userName = name;
-                localStorage.setItem('ai-roadmap-username', name);
-            }
+        let progress = {};
+        let expandedPhase = null;
+        let activeTab = 'roadmap';
 
-            saveProgress() {
-                localStorage.setItem('ai-roadmap-progress', JSON.stringify(this.progress));
-                this.checkCertificate();
-            }
+        function init() {
+            const saved = localStorage.getItem('ai-roadmap-progress');
+            if (saved) progress = JSON.parse(saved);
+            render();
+        }
 
-            toggleTopic(phase, topicName) {
-                const key = `${phase}-${topicName}`;
-                this.progress[key] = !this.progress[key];
-                this.saveProgress();
-                this.render();
-            }
+        function getTotalProgress() {
+            const totalTopics = roadmapData.reduce((sum, phase) => sum + phase.topics.length, 0);
+            const completedTopics = Object.values(progress).filter(Boolean).length;
+            return Math.round((completedTopics / totalTopics) * 100);
+        }
 
-            togglePhase(phase) {
-                this.expandedPhase = this.expandedPhase === phase ? null : phase;
-                this.render();
-            }
+        function getPhaseProgress(phase) {
+            const phaseData = roadmapData.find(p => p.phase === phase);
+            if (!phaseData) return 0;
+            const completed = phaseData.topics.filter(topic => progress[`${phase}-${topic.name}`]).length;
+            return Math.round((completed / phaseData.topics.length) * 100);
+        }
 
-            searchTopic(searchQuery) {
-                window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
-            }
+        function toggleTopic(phase, topicName) {
+            const key = `${phase}-${topicName}`;
+            progress[key] = !progress[key];
+            localStorage.setItem('ai-roadmap-progress', JSON.stringify(progress));
+            render();
+        }
 
-            getPhaseProgress(phase) {
-                const phaseData = roadmapData.find(p => p.phase === phase);
-                if (!phaseData) return 0;
-                const completed = phaseData.topics.filter(topic => this.progress[`${phase}-${topic.name}`]).length;
-                return Math.round((completed / phaseData.topics.length) * 100);
-            }
+        function togglePhase(phase) {
+            expandedPhase = expandedPhase === phase ? null : phase;
+            render();
+        }
 
-            getTotalProgress() {
-                const totalTopics = roadmapData.reduce((sum, phase) => sum + phase.topics.length, 0);
-                const completedTopics = Object.values(this.progress).filter(Boolean).length;
-                return Math.round((completedTopics / totalTopics) * 100);
-            }
+        function switchTab(tab) {
+            activeTab = tab;
+            render();
+        }
 
-            checkCertificate() {
-                if (this.getTotalProgress() === 100) {
-                    for (let i = 0; i < 50; i++) {
-                        setTimeout(() => {
-                            const c = document.createElement('div');
-                            c.className = 'confetti';
-                            c.style.left = Math.random() * 100 + '%';
-                            c.style.backgroundColor = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A'][Math.floor(Math.random() * 4)];
-                            document.body.appendChild(c);
-                            setTimeout(() => c.remove(), 3000);
-                        }, i * 30);
-                    }
-                }
-            }
-
-            generateCertificate() {
-                if (this.getTotalProgress() !== 100) {
-                    alert('Complete all topics to earn your certificate!');
-                    return;
-                }
-
-                let name = this.userName;
-                if (!name) {
-                    name = prompt('Enter your name for the certificate:');
-                    if (!name) return;
-                    this.saveUserName(name);
-                }
-
-                const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                const certId = 'AI-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
-
-                document.getElementById('certificateContent').innerHTML = `
-                    <div class="border-8 border-double border-indigo-600 p-12 bg-gradient-to-br from-blue-50 to-indigo-50">
-                        <div class="text-center">
-                            <svg class="w-20 h-20 mx-auto text-indigo-600 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+        function render() {
+            const totalProgress = getTotalProgress();
+            let html = `
+                <div class="max-w-5xl mx-auto p-6">
+                    <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Engineer Roadmap</h1>
+                                <p class="text-gray-600">From CS Fundamentals to AI Expertise</p>
+                            </div>
+                            <svg class="w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <h1 class="text-5xl font-bold text-gray-800 mb-4">Certificate of Completion</h1>
-                            <div class="text-xl text-gray-600 mb-8">This is to certify that</div>
-                            <div class="text-4xl font-bold text-indigo-600 mb-8 border-b-2 border-indigo-300 pb-4 inline-block px-8">${name}</div>
-                            <div class="text-xl text-gray-700 mb-6">has successfully completed the</div>
-                            <div class="text-3xl font-bold text-gray-800 mb-8">AI Engineer Roadmap</div>
-                            <div class="text-lg text-gray-600 mb-8">Mastering 70+ topics across Mathematics, Computer Science, Machine Learning,<br>Deep Learning, Prompt Engineering, AI Security & Ethics, MLOps, and Advanced AI</div>
-                            <div class="flex justify-between items-end mt-12 pt-8 border-t-2 border-gray-300">
-                                <div class="text-left">
-                                    <div class="text-sm text-gray-500">Date of Completion</div>
-                                    <div class="text-lg font-semibold text-gray-800">${today}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="border-t-2 border-gray-800 pt-2 mb-2 w-48">
-                                        <div class="text-lg font-semibold text-gray-800">Omparhad</div>
-                                    </div>
-                                    <div class="text-sm text-gray-500">Course Creator</div>
-                                </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-semibold text-gray-700">Overall Progress</span>
+                                <span class="text-sm font-bold text-indigo-600">${totalProgress}%</span>
                             </div>
-                            <div class="mt-8 text-xs text-gray-500">Certificate ID: ${certId}</div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full transition-all duration-500" style="width: ${totalProgress}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tabs -->
+                        <div class="mt-6 flex gap-2 border-b border-gray-200">
+                            <button onclick="switchTab('roadmap')" class="px-4 py-2 font-semibold transition-colors ${activeTab === 'roadmap' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-gray-800'}">
+                                📚 Roadmap
+                            </button>
+                            <button onclick="switchTab('blogs')" class="px-4 py-2 font-semibold transition-colors ${activeTab === 'blogs' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-gray-800'}">
+                                ✍️ Blogs
+                            </button>
+                            <button onclick="switchTab('books')" class="px-4 py-2 font-semibold transition-colors ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-gray-800'}">
+                                📖 Books
+                            </button>
+                            <button onclick="switchTab('projects')" class="px-4 py-2 font-semibold transition-colors ${activeTab === 'projects' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-gray-800'}">
+                                🚀 Projects
+                            </button>
                         </div>
                     </div>
-                    <div class="mt-6 flex gap-4 justify-center print:hidden">
-                        <button id="downloadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold">Download Certificate</button>
-                        <button id="closeBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold">Close</button>
-                    </div>
-                `;
 
-                const modal = document.getElementById('certificateModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                    <!-- Roadmap Tab -->
+                    <div class="tab-content ${activeTab === 'roadmap' ? 'active' : ''}">
+            `;
+
+            roadmapData.forEach((phase, idx) => {
+                const phaseProgress = getPhaseProgress(phase.phase);
+                const isExpanded = expandedPhase === phase.phase;
                 
-                // Add event listeners for modal buttons
-                document.getElementById('downloadBtn').addEventListener('click', () => window.print());
-                document.getElementById('closeBtn').addEventListener('click', () => this.closeCertificate());
-            }
-
-            closeCertificate() {
-                document.getElementById('certificateModal').classList.add('hidden');
-                document.getElementById('certificateModal').classList.remove('flex');
-            }
-
-            render() {
-                const totalProgress = this.getTotalProgress();
-                document.getElementById('app').innerHTML = `
-                    <div class="max-w-5xl mx-auto">
-                        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Engineer Roadmap</h1>
-                                    <p class="text-gray-600">From CS Fundamentals to AI Expertise</p>
-                                </div>
-                                <svg class="w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="mt-6">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm font-semibold text-gray-700">Overall Progress</span>
-                                    <span class="text-sm font-bold text-indigo-600">${totalProgress}%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full transition-all duration-500" style="width: ${totalProgress}%"></div>
-                                </div>
-                            </div>
-                            ${totalProgress === 100 ? `
-                                <div class="mt-6">
-                                    <button id="certBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg transition-all transform hover:scale-105 flex items-center justify-center gap-3">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                                        🎉 Generate Your Certificate!
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
-                        ${roadmapData.map((phase, idx) => this.renderPhase(phase, idx)).join('')}
-                        <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
-                            <h3 class="text-lg font-bold text-gray-800 mb-3">💡 Pro Tips</h3>
-                            <ul class="space-y-2 text-gray-700">
-                                <li>• Master mathematics and CS fundamentals before diving deep into ML</li>
-                                <li>• Build projects alongside learning to reinforce concepts</li>
-                                <li>• Join AI/ML communities on Reddit, Discord, and Kaggle</li>
-                                <li>• Practice DSA regularly on LeetCode for interviews</li>
-                                <li>• Stay consistent - even 1 hour daily compounds over time</li>
-                            </ul>
-                        </div>
-                        <div class="mt-8 pb-6">
-                            <div class="bg-white rounded-lg shadow p-4 text-center">
-                                <p class="text-sm text-gray-600">© 2026 <span class="font-semibold text-indigo-600">Omparhad</span>. All rights reserved.</p>
-                                <p class="text-xs text-gray-500 mt-1">AI Learning Path Tracker | Empowering ML Engineers Worldwide</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                this.attachListeners();
-            }
-
-            renderPhase(phase, idx) {
-                const progress = this.getPhaseProgress(phase.phase);
-                const expanded = this.expandedPhase === phase.phase;
-                return `
+                html += `
                     <div class="bg-white rounded-2xl shadow-lg mb-4 overflow-hidden">
-                        <button class="phase-toggle w-full p-6 text-left hover:bg-gray-50 transition-colors" data-phase="${phase.phase}">
+                        <button onclick="togglePhase('${phase.phase}')" class="w-full p-6 text-left hover:bg-gray-50 transition-colors">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${progress === 100 ? 'bg-green-500' : 'bg-indigo-500'}">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${phaseProgress === 100 ? 'bg-green-500' : 'bg-indigo-500'}">
                                         <span class="text-white font-bold">${idx + 1}</span>
                                     </div>
                                     <div>
@@ -391,86 +304,176 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-2xl font-bold text-indigo-600">${progress}%</div>
+                                    <div class="text-2xl font-bold text-indigo-600">${phaseProgress}%</div>
                                     <div class="text-xs text-gray-500">Complete</div>
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500" style="width: ${phaseProgress}%"></div>
                             </div>
                         </button>
-                        ${expanded ? this.renderTopics(phase) : ''}
-                    </div>
                 `;
-            }
 
-            renderTopics(phase) {
-                return `
-                    <div class="border-t border-gray-200 p-6 bg-gray-50">
-                        ${phase.topics.map(topic => this.renderTopic(phase.phase, topic)).join('')}
-                    </div>
-                `;
-            }
-
-            renderTopic(phaseName, topic) {
-                const completed = this.progress[`${phaseName}-${topic.name}`];
-                return `
-                    <div class="topic-item bg-white rounded-lg p-4 mb-3 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-start gap-3">
-                            <button class="topic-toggle flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${completed ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-indigo-400'}" data-phase="${phaseName}" data-topic="${topic.name}">
-                                ${completed ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
-                            </button>
-                            <div class="flex-1">
-                                <h3 class="font-semibold mb-2 ${completed ? 'text-gray-500 line-through' : 'text-gray-800'}">${topic.name}</h3>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                    <span class="text-sm text-gray-600">${topic.resources.join(', ')}</span>
+                if (isExpanded) {
+                    html += `<div class="border-t border-gray-200 p-6 bg-gray-50">`;
+                    phase.topics.forEach(topic => {
+                        const key = `${phase.phase}-${topic.name}`;
+                        const completed = progress[key];
+                        const escapedName = topic.name.replace(/'/g, "\\'");
+                        html += `
+                            <div class="topic-item bg-white rounded-lg p-4 mb-3 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-start gap-3">
+                                    <button onclick="toggleTopic('${phase.phase}', '${escapedName}')" class="flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${completed ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-indigo-400'}">
+                                        ${completed ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                                    </button>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold mb-2 ${completed ? 'text-gray-500 line-through' : 'text-gray-800'}">${topic.name}</h3>
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span class="text-sm text-gray-600">${topic.resources.join(', ')}</span>
+                                        </div>
+                                        <button onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(topic.searchQuery)}', '_blank')" class="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                            Search Learning Materials
+                                        </button>
+                                    </div>
                                 </div>
-                                <button class="search-btn flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors" data-query="${topic.searchQuery}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                    Search Learning Materials
-                                </button>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+
+            // Blogs Tab
+            html += `
+                <div class="tab-content ${activeTab === 'blogs' ? 'active' : ''}">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">✍️ Essential AI/ML Blogs</h2>
+                        <p class="text-gray-600 mb-6">Stay updated with these top-quality free blogs from industry experts</p>
+                        <div class="grid gap-4">
+            `;
+
+            blogs.forEach(blog => {
+                html += `
+                    <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-indigo-400 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">${blog.title}</h3>
+                                <p class="text-sm text-gray-600 mb-3">${blog.desc}</p>
+                                <a href="${blog.url}" target="_blank" class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    Visit Blog
+                                </a>
                             </div>
                         </div>
                     </div>
                 `;
-            }
+            });
 
-            attachListeners() {
-                document.querySelectorAll('.phase-toggle').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        this.togglePhase(e.currentTarget.dataset.phase);
-                    });
-                });
-                document.querySelectorAll('.topic-toggle').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.toggleTopic(e.currentTarget.dataset.phase, e.currentTarget.dataset.topic);
-                    });
-                });
-                document.querySelectorAll('.search-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.searchTopic(e.currentTarget.dataset.query);
-                    });
-                });
-                
-                // Attach certificate button listener
-                const certBtn = document.getElementById('certBtn');
-                if (certBtn) {
-                    certBtn.addEventListener('click', () => {
-                        this.generateCertificate();
-                    });
-                }
-            }
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Books Tab
+            html += `
+                <div class="tab-content ${activeTab === 'books' ? 'active' : ''}">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">📖 Free AI/ML Books</h2>
+                        <p class="text-gray-600 mb-6">Comprehensive textbooks and resources available online for free</p>
+                        <div class="grid gap-4">
+            `;
+
+            books.forEach(book => {
+                html += `
+                    <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-indigo-400 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">${book.title}</h3>
+                                <p class="text-sm text-gray-600 mb-3">${book.desc}</p>
+                                <a href="${book.url}" target="_blank" class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Read Free
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Projects Tab
+            html += `
+                <div class="tab-content ${activeTab === 'projects' ? 'active' : ''}">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">🚀 Project Ideas to Build</h2>
+                        <p class="text-gray-600 mb-6">Hands-on projects to strengthen your portfolio and practical skills</p>
+                        <div class="grid gap-4">
+            `;
+
+            projects.forEach(project => {
+                const difficultyColors = {
+                    'Beginner': 'bg-green-100 text-green-800',
+                    'Intermediate': 'bg-yellow-100 text-yellow-800',
+                    'Advanced': 'bg-red-100 text-red-800'
+                };
+                html += `
+                    <div class="border-2 border-gray-200 rounded-lg p-5 hover:border-indigo-400 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-lg font-bold text-gray-800 flex-1">${project.title}</h3>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${difficultyColors[project.difficulty]}">${project.difficulty}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">${project.desc}</p>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <span>${project.tech}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            html += `
+                <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">💡 Pro Tips</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• Master mathematics and CS fundamentals before diving deep into ML</li>
+                        <li>• Build projects alongside learning to reinforce concepts</li>
+                        <li>• Read blogs regularly to stay updated with latest trends</li>
+                        <li>• Complete at least 3-5 portfolio projects before job hunting</li>
+                        <li>• Join AI/ML communities on Reddit, Discord, and Kaggle</li>
+                        <li>• Practice DSA regularly on LeetCode for interviews</li>
+                        <li>• Stay consistent - even 1 hour daily compounds over time</li>
+                    </ul>
+                </div>
+                <div class="mt-8 pb-6">
+                    <div class="bg-white rounded-lg shadow p-4 text-center">
+                        <p class="text-sm text-gray-600">© 2026 <span class="font-semibold text-indigo-600">Omparhad</span>. All rights reserved.</p>
+                        <p class="text-xs text-gray-500 mt-1">AI Learning Path Tracker | Empowering ML Engineers Worldwide</p>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            document.getElementById('app').innerHTML = html;
         }
 
-        let app;
-        window.addEventListener('DOMContentLoaded', () => {
-            app = new RoadmapApp();
-            window.app = app; // Make app globally accessible
-            document.getElementById('closeModal').addEventListener('click', () => app.closeCertificate());
-        });
+        init();
     </script>
 </body>
 </html>
