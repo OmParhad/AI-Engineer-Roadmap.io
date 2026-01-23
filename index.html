@@ -7,208 +7,177 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .topic-item {
-            animation: slideIn 0.3s ease-out;
+        .topic-item { animation: slideIn 0.3s ease-out; }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear;
+            pointer-events: none;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #certificateContent, #certificateContent * { visibility: visible; }
+            #certificateContent { position: absolute; left: 0; top: 0; }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <a href="https://github.com/omparhad" target="_blank" class="fixed top-6 right-6 z-50 bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+    </a>
+
     <div id="app" class="p-6"></div>
 
+    <div id="certificateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 print:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <div id="certificateContent"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const roadmapData = [
             {
-                phase: "Foundation",
+                phase: "Mathematics for AI/ML",
+                duration: "3-4 months",
+                topics: [
+                    { name: "Linear Algebra (Vectors, Matrices, Eigenvalues)", resources: ["Khan Academy", "3Blue1Brown"], searchQuery: "linear algebra machine learning Khan Academy" },
+                    { name: "Calculus (Derivatives, Gradients, Optimization)", resources: ["Khan Academy", "MIT OCW"], searchQuery: "calculus for machine learning gradient Khan Academy" },
+                    { name: "Probability Theory", resources: ["Khan Academy", "StatQuest"], searchQuery: "probability theory machine learning from StatQuest YouTube" },
+                    { name: "Statistics (Distributions, Hypothesis Testing)", resources: ["Khan Academy", "StatQuest"], searchQuery: "statistics for machine learning statquest" },
+                    { name: "Information Theory & Entropy", resources: ["Khan Academy"], searchQuery: "information theory entropy machine learning" },
+                    { name: "Optimization Techniques", resources: ["Stanford Lectures"], searchQuery: "optimization techniques machine learning tutorial" }
+                ]
+            },
+            {
+                phase: "CS Fundamentals",
+                duration: "3-4 months",
+                topics: [
+                    { name: "Data Structures (Arrays, LinkedList, Stack, Queue)", resources: ["CS50 Harvard", "GeeksforGeeks"], searchQuery: "data structures tutorial cs50 free course" },
+                    { name: "Algorithms (Sorting, Searching, Recursion)", resources: ["MIT OpenCourseWare", "Abdul Bari YouTube"], searchQuery: "algorithms sorting searching recursion tutorial" },
+                    { name: "Time & Space Complexity (Big O Notation)", resources: ["freeCodeCamp", "MyCodeSchool"], searchQuery: "big o notation time complexity tutorial" },
+                    { name: "Object-Oriented Programming (OOP)", resources: ["Programming with Mosh", "freeCodeCamp"], searchQuery: "object oriented programming python tutorial" },
+                    { name: "Database Fundamentals (SQL)", resources: ["Khan Academy", "SQLBolt"], searchQuery: "sql database fundamentals tutorial free" },
+                    { name: "Operating Systems Basics", resources: ["Gate Smashers YouTube", "Neso Academy"], searchQuery: "operating systems fundamentals tutorial" },
+                    { name: "Computer Networks Basics", resources: ["Khan Academy", "Kunal Kushwaha"], searchQuery: "computer networks basics tutorial free" }
+                ]
+            },
+            {
+                phase: "Programming Foundation",
                 duration: "2-3 months",
                 topics: [
-                    { 
-                        name: "Python Programming Basics", 
-                        resources: ["Python.org Tutorial", "freeCodeCamp Python Course"],
-                        searchQuery: "python programming from FreeCodeCamp."
-                    },
-                    { 
-                        name: "NumPy & Pandas", 
-                        resources: ["NumPy Docs", "Pandas Docs"],
-                        searchQuery: "numpy pandas from freecodecamp."
-                    },
-                    { 
-                        name: "Data Visualization (Matplotlib)", 
-                        resources: ["Matplotlib Tutorials"],
-                        searchQuery: "matplotlib data visualization from freecodecamp."
-                    },
-                    { 
-                        name: "Linear Algebra", 
-                        resources: ["Khan Academy", "3Blue1Brown"],
-                        searchQuery: "linear algebra for machine learning Khan Academy."
-                    },
-                    { 
-                        name: "Calculus Fundamentals", 
-                        resources: ["Khan Academy"],
-                        searchQuery: "calculus for machine learning Khan Academy."
-                    },
-                    { 
-                        name: "Probability & Statistics", 
-                        resources: ["Khan Academy"],
-                        searchQuery: "probability statistics machine learning from Khan Academy."
-                    }
+                    { name: "Python Programming Basics", resources: ["Python.org Tutorial", "freeCodeCamp"], searchQuery: "python programming basics tutorial free" },
+                    { name: "NumPy & Pandas", resources: ["NumPy Docs", "Pandas Docs"], searchQuery: "numpy pandas tutorial for machine learning" },
+                    { name: "Data Visualization (Matplotlib, Seaborn)", resources: ["Matplotlib Tutorials", "Seaborn Docs"], searchQuery: "matplotlib seaborn data visualization tutorial" },
+                    { name: "Jupyter Notebooks & Google Colab", resources: ["Jupyter Docs", "Google Colab"], searchQuery: "jupyter notebook google colab tutorial" }
                 ]
             },
             {
                 phase: "Core Machine Learning",
                 duration: "3-4 months",
                 topics: [
-                    { 
-                        name: "Andrew Ng's ML Specialization", 
-                        resources: ["Coursera"],
-                        searchQuery: "andrew ng machine learning specialization coursera."
-                    },
-                    { 
-                        name: "Regression Models", 
-                        resources: ["scikit-learn Docs"],
-                        searchQuery: "regression models scikit-learn tutorial."
-                    },
-                    { 
-                        name: "Decision Trees & Random Forests", 
-                        resources: ["scikit-learn Docs"],
-                        searchQuery: "decision trees random forests tutorial."
-                    },
-                    { 
-                        name: "Support Vector Machines", 
-                        resources: ["scikit-learn Docs"],
-                        searchQuery: "SVM support vector machines tutorial."
-                    },
-                    { 
-                        name: "Clustering Algorithms", 
-                        resources: ["scikit-learn Docs"],
-                        searchQuery: "clustering algorithms k-means tutorial."
-                    },
-                    { 
-                        name: "Kaggle Practice Projects", 
-                        resources: ["Kaggle"],
-                        searchQuery: "kaggle beginner machine learning competitions."
-                    }
+                    { name: "Andrew Ng's ML Specialization", resources: ["Coursera"], searchQuery: "andrew ng machine learning specialization coursera" },
+                    { name: "Regression Models", resources: ["scikit-learn Docs"], searchQuery: "regression models scikit-learn tutorial" },
+                    { name: "Decision Trees & Random Forests", resources: ["scikit-learn Docs"], searchQuery: "decision trees random forests tutorial" },
+                    { name: "Support Vector Machines", resources: ["scikit-learn Docs"], searchQuery: "SVM support vector machines tutorial" },
+                    { name: "Clustering Algorithms", resources: ["scikit-learn Docs"], searchQuery: "clustering algorithms k-means tutorial" },
+                    { name: "Feature Engineering & Selection", resources: ["Kaggle Learn"], searchQuery: "feature engineering machine learning kaggle" },
+                    { name: "Model Evaluation & Validation", resources: ["scikit-learn Docs"], searchQuery: "model evaluation cross validation tutorial" },
+                    { name: "Kaggle Practice Projects", resources: ["Kaggle"], searchQuery: "kaggle beginner machine learning competitions" }
                 ]
             },
             {
                 phase: "Deep Learning",
                 duration: "3-4 months",
                 topics: [
-                    { 
-                        name: "fast.ai Course", 
-                        resources: ["fast.ai"],
-                        searchQuery: "fast.ai practical deep learning for coders."
-                    },
-                    { 
-                        name: "Deep Learning Specialization", 
-                        resources: ["Coursera"],
-                        searchQuery: "andrew ng deep learning specialization."
-                    },
-                    { 
-                        name: "Neural Networks Fundamentals", 
-                        resources: ["3Blue1Brown"],
-                        searchQuery: "neural networks 3blue1brown tutorial"
-                    },
-                    { 
-                        name: "PyTorch Basics", 
-                        resources: ["PyTorch.org"],
-                        searchQuery: "pytorch tutorial for beginners official"
-                    },
-                    { 
-                        name: "TensorFlow Basics", 
-                        resources: ["TensorFlow.org"],
-                        searchQuery: "tensorflow tutorial for beginners official"
-                    },
-                    { 
-                        name: "CNNs & Computer Vision", 
-                        resources: ["PyTorch Tutorials"],
-                        searchQuery: "convolutional neural networks CNN tutorial"
-                    },
-                    { 
-                        name: "RNNs & Sequence Models", 
-                        resources: ["PyTorch Tutorials"],
-                        searchQuery: "recurrent neural networks RNN LSTM tutorial"
-                    }
+                    { name: "fast.ai Course", resources: ["fast.ai"], searchQuery: "fast.ai practical deep learning for coders" },
+                    { name: "Deep Learning Specialization", resources: ["Coursera"], searchQuery: "andrew ng deep learning specialization" },
+                    { name: "Neural Networks Fundamentals", resources: ["3Blue1Brown"], searchQuery: "neural networks 3blue1brown tutorial" },
+                    { name: "PyTorch Basics", resources: ["PyTorch.org"], searchQuery: "pytorch tutorial for beginners official" },
+                    { name: "TensorFlow Basics", resources: ["TensorFlow.org"], searchQuery: "tensorflow tutorial for beginners official" },
+                    { name: "CNNs & Computer Vision", resources: ["PyTorch Tutorials"], searchQuery: "convolutional neural networks CNN tutorial" },
+                    { name: "RNNs & Sequence Models", resources: ["PyTorch Tutorials"], searchQuery: "recurrent neural networks RNN LSTM tutorial" },
+                    { name: "Transfer Learning", resources: ["PyTorch Tutorials"], searchQuery: "transfer learning deep learning tutorial" }
                 ]
             },
             {
-                phase: "MLOps & Engineering",
+                phase: "Prompt Engineering & LLMs",
                 duration: "2-3 months",
                 topics: [
-                    { 
-                        name: "Git & Version Control", 
-                        resources: ["GitHub Guides"],
-                        searchQuery: "git github tutorial for machine learning"
-                    },
-                    { 
-                        name: "Docker Basics", 
-                        resources: ["Docker Docs"],
-                        searchQuery: "docker tutorial for machine learning deployment"
-                    },
-                    { 
-                        name: "Model Deployment with FastAPI", 
-                        resources: ["FastAPI Docs"],
-                        searchQuery: "fastapi machine learning model deployment tutorial"
-                    },
-                    { 
-                        name: "MLOps Fundamentals", 
-                        resources: ["Made With ML"],
-                        searchQuery: "mlops tutorial made with ml free course"
-                    },
-                    { 
-                        name: "Cloud Platforms (AWS/GCP/Azure)", 
-                        resources: ["AWS Free Tier", "GCP Docs"],
-                        searchQuery: "aws machine learning free tier tutorial"
-                    },
-                    { 
-                        name: "Model Monitoring & Versioning", 
-                        resources: ["MLflow Docs"],
-                        searchQuery: "mlflow model versioning monitoring tutorial"
-                    }
+                    { name: "Prompt Engineering Fundamentals", resources: ["OpenAI Docs", "Anthropic Docs"], searchQuery: "prompt engineering tutorial openai anthropic" },
+                    { name: "Few-Shot & Zero-Shot Learning", resources: ["DeepLearning.AI"], searchQuery: "few shot zero shot learning prompt engineering" },
+                    { name: "Chain-of-Thought Prompting", resources: ["Papers with Code"], searchQuery: "chain of thought prompting technique tutorial" },
+                    { name: "Large Language Models Architecture", resources: ["Hugging Face", "DeepLearning.AI"], searchQuery: "large language models llm architecture tutorial" },
+                    { name: "Fine-tuning & RAG Systems", resources: ["Hugging Face Course"], searchQuery: "fine tuning rag retrieval augmented generation" },
+                    { name: "LangChain & AI Agents", resources: ["LangChain Docs"], searchQuery: "langchain ai agents tutorial" },
+                    { name: "Prompt Injection & Security", resources: ["OWASP AI Security"], searchQuery: "prompt injection attacks prevention tutorial" }
                 ]
             },
             {
-                phase: "Advanced Topics",
+                phase: "AI Security & Ethics",
+                duration: "2 months",
+                topics: [
+                    { name: "AI Ethics Principles", resources: ["Google AI Ethics", "MIT Ethics"], searchQuery: "ai ethics principles responsible ai" },
+                    { name: "Bias & Fairness in ML", resources: ["Google Fairness", "IBM AI Fairness"], searchQuery: "bias fairness machine learning tutorial" },
+                    { name: "Privacy-Preserving ML", resources: ["Differential Privacy"], searchQuery: "privacy preserving machine learning differential privacy" },
+                    { name: "Model Security & Adversarial Attacks", resources: ["Adversarial ML"], searchQuery: "adversarial attacks machine learning security" },
+                    { name: "AI Safety & Alignment", resources: ["AI Safety Fundamentals"], searchQuery: "ai safety alignment tutorial course" },
+                    { name: "Explainable AI (XAI)", resources: ["LIME, SHAP Tutorials"], searchQuery: "explainable ai xai lime shap tutorial" },
+                    { name: "AI Governance & Regulations", resources: ["EU AI Act Resources"], searchQuery: "ai governance regulations compliance tutorial" }
+                ]
+            },
+            {
+                phase: "Software Engineering & MLOps",
+                duration: "2-3 months",
+                topics: [
+                    { name: "Git & Version Control", resources: ["GitHub Guides"], searchQuery: "git github tutorial for machine learning" },
+                    { name: "Software Design Patterns", resources: ["Refactoring Guru"], searchQuery: "design patterns python tutorial free" },
+                    { name: "RESTful API Design", resources: ["RESTful API Tutorial"], searchQuery: "rest api design best practices tutorial" },
+                    { name: "Docker & Containerization", resources: ["Docker Docs"], searchQuery: "docker tutorial for machine learning deployment" },
+                    { name: "Model Deployment with FastAPI/Flask", resources: ["FastAPI Docs", "Flask Docs"], searchQuery: "fastapi machine learning model deployment tutorial" },
+                    { name: "CI/CD Pipelines", resources: ["GitHub Actions Docs"], searchQuery: "ci cd pipeline github actions tutorial" },
+                    { name: "MLOps Fundamentals", resources: ["Made With ML"], searchQuery: "mlops tutorial made with ml free course" },
+                    { name: "Cloud Platforms (AWS/GCP/Azure)", resources: ["AWS Free Tier", "GCP Docs"], searchQuery: "aws machine learning free tier tutorial" },
+                    { name: "Model Monitoring & Versioning", resources: ["MLflow Docs"], searchQuery: "mlflow model versioning monitoring tutorial" }
+                ]
+            },
+            {
+                phase: "Advanced AI Topics",
                 duration: "Ongoing",
                 topics: [
-                    { 
-                        name: "Natural Language Processing", 
-                        resources: ["Hugging Face Course"],
-                        searchQuery: "hugging face nlp course free"
-                    },
-                    { 
-                        name: "Computer Vision (CS231n)", 
-                        resources: ["Stanford YouTube"],
-                        searchQuery: "stanford cs231n computer vision youtube"
-                    },
-                    { 
-                        name: "Reinforcement Learning", 
-                        resources: ["OpenAI Spinning Up"],
-                        searchQuery: "openai spinning up reinforcement learning"
-                    },
-                    { 
-                        name: "Research Paper Implementation", 
-                        resources: ["arXiv", "Papers with Code"],
-                        searchQuery: "papers with code machine learning implementations"
-                    },
-                    { 
-                        name: "Transformers & Attention", 
-                        resources: ["Hugging Face"],
-                        searchQuery: "transformers attention mechanism tutorial"
-                    },
-                    { 
-                        name: "Open Source Contributions", 
-                        resources: ["GitHub"],
-                        searchQuery: "contribute to machine learning open source projects"
-                    }
+                    { name: "Natural Language Processing", resources: ["Hugging Face Course"], searchQuery: "hugging face nlp course free" },
+                    { name: "Computer Vision (CS231n)", resources: ["Stanford YouTube"], searchQuery: "stanford cs231n computer vision youtube" },
+                    { name: "Reinforcement Learning", resources: ["OpenAI Spinning Up"], searchQuery: "openai spinning up reinforcement learning" },
+                    { name: "Transformers & Attention Mechanisms", resources: ["Hugging Face"], searchQuery: "transformers attention mechanism tutorial" },
+                    { name: "Generative AI (GANs, Diffusion Models)", resources: ["Papers with Code"], searchQuery: "generative ai gan diffusion models tutorial" },
+                    { name: "Research Paper Implementation", resources: ["arXiv", "Papers with Code"], searchQuery: "papers with code machine learning implementations" },
+                    { name: "Open Source Contributions", resources: ["GitHub"], searchQuery: "contribute to machine learning open source projects" }
+                ]
+            },
+            {
+                phase: "Interview Preparation",
+                duration: "Ongoing",
+                topics: [
+                    { name: "DSA Practice (LeetCode/HackerRank)", resources: ["LeetCode", "HackerRank"], searchQuery: "leetcode data structures algorithms practice" },
+                    { name: "System Design for ML", resources: ["System Design Primer"], searchQuery: "machine learning system design interview" },
+                    { name: "ML Interview Questions", resources: ["Chip Huyen Blog"], searchQuery: "machine learning interview questions answers" },
+                    { name: "Coding Interview Prep", resources: ["Cracking the Coding Interview"], searchQuery: "coding interview preparation free resources" },
+                    { name: "Portfolio & GitHub Projects", resources: ["GitHub"], searchQuery: "machine learning portfolio projects github" }
                 ]
             }
         ];
@@ -217,7 +186,9 @@
             constructor() {
                 this.progress = this.loadProgress();
                 this.expandedPhase = null;
+                this.userName = this.loadUserName();
                 this.render();
+                this.checkCertificate();
             }
 
             loadProgress() {
@@ -225,8 +196,18 @@
                 return saved ? JSON.parse(saved) : {};
             }
 
+            loadUserName() {
+                return localStorage.getItem('ai-roadmap-username') || '';
+            }
+
+            saveUserName(name) {
+                this.userName = name;
+                localStorage.setItem('ai-roadmap-username', name);
+            }
+
             saveProgress() {
                 localStorage.setItem('ai-roadmap-progress', JSON.stringify(this.progress));
+                this.checkCertificate();
             }
 
             toggleTopic(phase, topicName) {
@@ -242,18 +223,13 @@
             }
 
             searchTopic(searchQuery) {
-                const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
-                window.open(url, '_blank');
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
             }
 
             getPhaseProgress(phase) {
                 const phaseData = roadmapData.find(p => p.phase === phase);
                 if (!phaseData) return 0;
-                
-                const completed = phaseData.topics.filter(topic => 
-                    this.progress[`${phase}-${topic.name}`]
-                ).length;
-                
+                const completed = phaseData.topics.filter(topic => this.progress[`${phase}-${topic.name}`]).length;
                 return Math.round((completed / phaseData.topics.length) * 100);
             }
 
@@ -263,100 +239,167 @@
                 return Math.round((completedTopics / totalTopics) * 100);
             }
 
-            render() {
-                const app = document.getElementById('app');
-                const totalProgress = this.getTotalProgress();
+            checkCertificate() {
+                if (this.getTotalProgress() === 100) {
+                    for (let i = 0; i < 50; i++) {
+                        setTimeout(() => {
+                            const c = document.createElement('div');
+                            c.className = 'confetti';
+                            c.style.left = Math.random() * 100 + '%';
+                            c.style.backgroundColor = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A'][Math.floor(Math.random() * 4)];
+                            document.body.appendChild(c);
+                            setTimeout(() => c.remove(), 3000);
+                        }, i * 30);
+                    }
+                }
+            }
+
+            generateCertificate() {
+                if (this.getTotalProgress() !== 100) {
+                    alert('Complete all topics to earn your certificate!');
+                    return;
+                }
+
+                let name = this.userName;
+                if (!name) {
+                    name = prompt('Enter your name for the certificate:');
+                    if (!name) return;
+                    this.saveUserName(name);
+                }
+
+                const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                const certId = 'AI-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+
+                document.getElementById('certificateContent').innerHTML = `
+                    <div class="border-8 border-double border-indigo-600 p-12 bg-gradient-to-br from-blue-50 to-indigo-50">
+                        <div class="text-center">
+                            <svg class="w-20 h-20 mx-auto text-indigo-600 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                            <h1 class="text-5xl font-bold text-gray-800 mb-4">Certificate of Completion</h1>
+                            <div class="text-xl text-gray-600 mb-8">This is to certify that</div>
+                            <div class="text-4xl font-bold text-indigo-600 mb-8 border-b-2 border-indigo-300 pb-4 inline-block px-8">${name}</div>
+                            <div class="text-xl text-gray-700 mb-6">has successfully completed the</div>
+                            <div class="text-3xl font-bold text-gray-800 mb-8">AI Engineer Roadmap</div>
+                            <div class="text-lg text-gray-600 mb-8">Mastering 70+ topics across Mathematics, Computer Science, Machine Learning,<br>Deep Learning, Prompt Engineering, AI Security & Ethics, MLOps, and Advanced AI</div>
+                            <div class="flex justify-between items-end mt-12 pt-8 border-t-2 border-gray-300">
+                                <div class="text-left">
+                                    <div class="text-sm text-gray-500">Date of Completion</div>
+                                    <div class="text-lg font-semibold text-gray-800">${today}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="border-t-2 border-gray-800 pt-2 mb-2 w-48">
+                                        <div class="text-lg font-semibold text-gray-800">Omparhad</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">Course Creator</div>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-xs text-gray-500">Certificate ID: ${certId}</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex gap-4 justify-center print:hidden">
+                        <button id="downloadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold">Download Certificate</button>
+                        <button id="closeBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold">Close</button>
+                    </div>
+                `;
+
+                const modal = document.getElementById('certificateModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 
-                app.innerHTML = `
+                // Add event listeners for modal buttons
+                document.getElementById('downloadBtn').addEventListener('click', () => window.print());
+                document.getElementById('closeBtn').addEventListener('click', () => this.closeCertificate());
+            }
+
+            closeCertificate() {
+                document.getElementById('certificateModal').classList.add('hidden');
+                document.getElementById('certificateModal').classList.remove('flex');
+            }
+
+            render() {
+                const totalProgress = this.getTotalProgress();
+                document.getElementById('app').innerHTML = `
                     <div class="max-w-5xl mx-auto">
-                        <!-- Header -->
                         <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h1 class="text-4xl font-bold text-gray-800 mb-2">
-                                        AI Engineer Roadmap
-                                    </h1>
-                                    <p class="text-gray-600">Track your progress to ML expertise</p>
+                                    <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Engineer Roadmap</h1>
+                                    <p class="text-gray-600">From CS Fundamentals to AI Expertise</p>
                                 </div>
                                 <svg class="w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            
-                            <!-- Overall Progress -->
                             <div class="mt-6">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm font-semibold text-gray-700">Overall Progress</span>
                                     <span class="text-sm font-bold text-indigo-600">${totalProgress}%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full transition-all duration-500"
-                                         style="width: ${totalProgress}%"></div>
+                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-4 rounded-full transition-all duration-500" style="width: ${totalProgress}%"></div>
                                 </div>
                             </div>
+                            ${totalProgress === 100 ? `
+                                <div class="mt-6">
+                                    <button id="certBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                                        🎉 Generate Your Certificate!
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
-
-                        <!-- Roadmap Phases -->
                         ${roadmapData.map((phase, idx) => this.renderPhase(phase, idx)).join('')}
-
-                        <!-- Footer Tips -->
                         <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
                             <h3 class="text-lg font-bold text-gray-800 mb-3">💡 Pro Tips</h3>
                             <ul class="space-y-2 text-gray-700">
+                                <li>• Master mathematics and CS fundamentals before diving deep into ML</li>
                                 <li>• Build projects alongside learning to reinforce concepts</li>
                                 <li>• Join AI/ML communities on Reddit, Discord, and Kaggle</li>
-                                <li>• Create a GitHub portfolio showcasing your projects</li>
-                                <li>• Practice coding interviews on LeetCode</li>
+                                <li>• Practice DSA regularly on LeetCode for interviews</li>
                                 <li>• Stay consistent - even 1 hour daily compounds over time</li>
                             </ul>
                         </div>
+                        <div class="mt-8 pb-6">
+                            <div class="bg-white rounded-lg shadow p-4 text-center">
+                                <p class="text-sm text-gray-600">© 2026 <span class="font-semibold text-indigo-600">Omparhad</span>. All rights reserved.</p>
+                                <p class="text-xs text-gray-500 mt-1">AI Learning Path Tracker | Empowering ML Engineers Worldwide</p>
+                            </div>
+                        </div>
                     </div>
                 `;
-
-                this.attachEventListeners();
+                this.attachListeners();
             }
 
             renderPhase(phase, idx) {
-                const phaseProgress = this.getPhaseProgress(phase.phase);
-                const isExpanded = this.expandedPhase === phase.phase;
-                
+                const progress = this.getPhaseProgress(phase.phase);
+                const expanded = this.expandedPhase === phase.phase;
                 return `
                     <div class="bg-white rounded-2xl shadow-lg mb-4 overflow-hidden">
-                        <!-- Phase Header -->
-                        <button class="phase-toggle w-full p-6 text-left hover:bg-gray-50 transition-colors"
-                                data-phase="${phase.phase}">
+                        <button class="phase-toggle w-full p-6 text-left hover:bg-gray-50 transition-colors" data-phase="${phase.phase}">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${
-                                        phaseProgress === 100 ? 'bg-green-500' : 'bg-indigo-500'
-                                    }">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${progress === 100 ? 'bg-green-500' : 'bg-indigo-500'}">
                                         <span class="text-white font-bold">${idx + 1}</span>
                                     </div>
                                     <div>
                                         <h2 class="text-2xl font-bold text-gray-800">${phase.phase}</h2>
                                         <div class="flex items-center gap-2 mt-1">
-                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                             <span class="text-sm text-gray-600">${phase.duration}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-2xl font-bold text-indigo-600">${phaseProgress}%</div>
+                                    <div class="text-2xl font-bold text-indigo-600">${progress}%</div>
                                     <div class="text-xs text-gray-500">Complete</div>
                                 </div>
                             </div>
-                            
-                            <!-- Phase Progress Bar -->
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500"
-                                     style="width: ${phaseProgress}%"></div>
+                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
                             </div>
                         </button>
-
-                        <!-- Topics List -->
-                        ${isExpanded ? this.renderTopics(phase) : ''}
+                        ${expanded ? this.renderTopics(phase) : ''}
                     </div>
                 `;
             }
@@ -370,47 +413,21 @@
             }
 
             renderTopic(phaseName, topic) {
-                const isCompleted = this.progress[`${phaseName}-${topic.name}`];
-                
+                const completed = this.progress[`${phaseName}-${topic.name}`];
                 return `
                     <div class="topic-item bg-white rounded-lg p-4 mb-3 shadow-sm hover:shadow-md transition-shadow">
                         <div class="flex items-start gap-3">
-                            <!-- Checkbox -->
-                            <button class="topic-toggle flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-                                isCompleted 
-                                    ? 'bg-green-500 border-green-500' 
-                                    : 'border-gray-300 hover:border-indigo-400'
-                            }"
-                                    data-phase="${phaseName}"
-                                    data-topic="${topic.name}">
-                                ${isCompleted ? `
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                ` : ''}
+                            <button class="topic-toggle flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${completed ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-indigo-400'}" data-phase="${phaseName}" data-topic="${topic.name}">
+                                ${completed ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
                             </button>
-
                             <div class="flex-1">
-                                <h3 class="font-semibold mb-2 ${
-                                    isCompleted ? 'text-gray-500 line-through' : 'text-gray-800'
-                                }">
-                                    ${topic.name}
-                                </h3>
-                                
+                                <h3 class="font-semibold mb-2 ${completed ? 'text-gray-500 line-through' : 'text-gray-800'}">${topic.name}</h3>
                                 <div class="flex items-center gap-2 mb-2">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
-                                    <span class="text-sm text-gray-600">
-                                        ${topic.resources.join(', ')}
-                                    </span>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    <span class="text-sm text-gray-600">${topic.resources.join(', ')}</span>
                                 </div>
-
-                                <button class="search-btn flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
-                                        data-query="${topic.searchQuery}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
+                                <button class="search-btn flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors" data-query="${topic.searchQuery}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                     Search Learning Materials
                                 </button>
                             </div>
@@ -419,39 +436,41 @@
                 `;
             }
 
-            attachEventListeners() {
-                // Phase toggle listeners
+            attachListeners() {
                 document.querySelectorAll('.phase-toggle').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        const phase = e.currentTarget.dataset.phase;
-                        this.togglePhase(phase);
+                        this.togglePhase(e.currentTarget.dataset.phase);
                     });
                 });
-
-                // Topic toggle listeners
                 document.querySelectorAll('.topic-toggle').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const phase = e.currentTarget.dataset.phase;
-                        const topic = e.currentTarget.dataset.topic;
-                        this.toggleTopic(phase, topic);
+                        this.toggleTopic(e.currentTarget.dataset.phase, e.currentTarget.dataset.topic);
                     });
                 });
-
-                // Search button listeners
                 document.querySelectorAll('.search-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const query = e.currentTarget.dataset.query;
-                        this.searchTopic(query);
+                        this.searchTopic(e.currentTarget.dataset.query);
                     });
                 });
+                
+                // Attach certificate button listener
+                const certBtn = document.getElementById('certBtn');
+                if (certBtn) {
+                    certBtn.addEventListener('click', () => {
+                        this.generateCertificate();
+                    });
+                }
             }
         }
 
-        // Initialize the app
-        new RoadmapApp();
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new RoadmapApp();
+            window.app = app; // Make app globally accessible
+            document.getElementById('closeModal').addEventListener('click', () => app.closeCertificate());
+        });
     </script>
 </body>
-
 </html>
